@@ -1,0 +1,141 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view3">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      
+      .flex-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      
+      .flex-item {
+        flex: 1 1 25%;
+      }  
+      
+      .big {
+        --iron-icon-height: 60px;
+        --iron-icon-width: 60px;
+      }  
+      
+      .rgb {
+        --iron-icon-fill-color: var(--paper-grey-200);
+      }
+      
+      .rg {
+        --iron-icon-fill-color: var(--paper-yellow-500);
+      }
+      
+      .rb {
+        --iron-icon-fill-color: var(--paper-pink-300);
+      }
+      
+      .gb {
+        --iron-icon-fill-color: var(--paper-cyan-300);
+      }
+      
+      .r {
+        --iron-icon-fill-color: var(--paper-red-500);
+      }
+      
+      .g {
+        --iron-icon-fill-color: var(--paper-green-500);
+      }
+      
+      .b {
+        --iron-icon-fill-color: var(--paper-blue-500);
+      }      
+      
+      .white {
+        --iron-icon-fill-color: #ffffff;
+      }
+
+      
+    </style>
+    
+    <paper-card>
+      <div class="card-content">
+        <h3>LED</h3>
+          <paper-dropdown-menu label="Mode">
+            <paper-listbox class="dropdown-content" id="inputLEDList">
+              <paper-item>Off</paper-item>
+              <paper-item>Constant</paper-item>
+              <paper-item>Breathe</paper-item>
+              <paper-item>One shot</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <br>
+          <br>
+
+          <div class="flex-container">
+              <div class="flex-item" align="center"> <iron-icon class="big rgb" icon="image:lens" on-tap="changeLED" red="255" green="255" blue="255" color="7"></iron-icon></div>
+              <div class="flex-item" align="center"> <iron-icon class="big rg" icon="image:lens" on-tap="changeLED" red="255" green="255" blue="0" color="3"></iron-icon></div>
+              <div class="flex-item" align="center"> <iron-icon class="big rb" icon="image:lens" on-tap="changeLED" red="255" green="0" blue="255" color="5"></iron-icon></div>
+              <div class="flex-item" align="center"> <iron-icon class="big gb" icon="image:lens" on-tap="changeLED" red="0" green="255" blue="255" color="6"></iron-icon></div>
+          </div>
+          <br>
+          <div class="flex-container">
+              <div class="flex-item" align="center"> <iron-icon class="big r" icon="image:lens" on-tap="changeLED" red="255" green="0" blue="0" color="1"></iron-icon></div>
+              <div class="flex-item" align="center"> <iron-icon class="big g" icon="image:lens" on-tap="changeLED" red="0" green="255" blue="0" color="2"></iron-icon></div>
+              <div class="flex-item" align="center"> <iron-icon class="big b" icon="image:lens" on-tap="changeLED" red="0" green="0" blue="255"color="4"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="big white" icon="image:lens"></iron-icon></div>
+          </div>      
+        
+          <br>
+
+        </div>
+      </paper-card>
+    
+    <paper-card>
+      <div class="card-content">
+        <h3>Button</h3>
+        <p>State: {{button}}</p>
+      </div>     
+    </paper-card>       
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view3',
+      
+      properties:{
+        button: {
+          type: String,
+          value: 'RELEASED'
+        }
+      },
+        
+      changeLED: function(event){
+        //console.log("Tapped LED color");
+        let mode = this.$.inputLEDList.selected;
+        let r = event.currentTarget.getAttribute('red');
+        let g = event.currentTarget.getAttribute('green');
+        let b = event.currentTarget.getAttribute('blue');
+        let color = event.currentTarget.getAttribute('color'); 
+        event.color = color;
+        event.red = r;
+        event.green = g;
+        event.blue = b;
+        event.mode = mode;
+        this.fire('change-LED', event);
+      }
+    });
+  </script>
+</dom-module>

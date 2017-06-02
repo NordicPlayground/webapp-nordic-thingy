@@ -1,0 +1,155 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script src="js/three.js"></script>
+<script src="js/Detector.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script src="js/OBJLoader.js"></script>
+<script src="js/MTLLoader.js"></script>
+
+<dom-module id="my-3d">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+        .containers {
+          width: 200px;
+          height: 200px;
+          background-color: aqua;
+        }
+    </style>
+    <div id="container" class="containers"></div>
+  </template>
+
+  <script>
+
+    
+    Polymer({
+
+      is: 'my-3d',
+
+      properties: {
+        eulerX: {
+          type: Number,
+          value: 0,
+          notify: true,
+          reflectToAttribute: true,
+          observer: '_eulerXchanged'
+        },
+        eulerY: {
+          type: Number,
+          value: 1,
+          notify: true,
+          reflectToAttribute: true,
+          observer: '_eulerYchanged'
+        },
+        eulerZ: {
+          type: Number,
+          value: 2,
+          notify: true,
+          reflectToAttribute: true,
+          observer: '_eulerZchanged'
+        }
+      },
+      
+      _eulerXchanged: function(newValue, oldValue){
+        x =  getRadians(newValue + 180);
+        //console.log('x: ' + x);
+      },
+      
+      _eulerYchanged: function(newValue, oldValue){
+        y =  getRadians((newValue * -1 ) + 180);
+        //console.log('y: ' + y);
+      },
+      
+      _eulerZchanged: function(newValue, oldValue){
+        z =  getRadians(newValue + 180);
+        //console.log('z: ' + z);
+      },      
+      
+      ready: function(){
+        let container = Polymer.dom( this.$.container );
+        let camera, controls, scene, renderer, id;
+        let ambientLight, keyLight, fillLight, backLight;
+        let thingy3D = null;
+        let x, y, z;
+        //let path = 'thingy/52/src/my-3d/assets/';
+        let path = 'thingy/52/src/my-3d/assets/';
+        
+        init();
+        render();
+        
+        function init(){ 
+        // The detector will show a warning if the current browser does not support WebGL.
+        if (!Detector.webgl) {
+            Detector.addGetWebGLMessage();
+        }
+        
+        camera = new THREE.PerspectiveCamera(1, 1, 1, 200);
+        camera.position.z = 3;
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
+
+        // Add ambient light and three-point lighting
+        ambientLight = new THREE.AmbientLight(0xffffff, 0.25);
+
+        keyLight = new THREE.DirectionalLight(new THREE.Color('hsl(30, 100%, 75%)'), 1.0);
+        keyLight.position.set(-100, 0, 100);
+
+        fillLight = new THREE.DirectionalLight(new THREE.Color('hsl(240, 100%, 75%)'), 0.75);
+        fillLight.position.set(100, 0, 100);
+
+        backLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        backLight.position.set(100, 0, -100).normalize();
+
+        scene.add(ambientLight);
+        scene.add(keyLight);
+        scene.add(fillLight);
+        scene.add(backLight);   
+
+        // Load materials
+        var mtlLoader = new THREE.MTLLoader();
+        //mtlLoader.setBaseUrl(path);
+        mtlLoader.setTexturePath(path);
+        mtlLoader.setPath(path);
+        mtlLoader.load('thingyobjectfinal_mtl.mtl', function (materials) {
+            materials.preload();
+            var objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials(materials);
+            objLoader.setPath(path);
+            objLoader.load('thingyobjectfinal_obj.obj', function (object) {
+              thingy3D = object;
+              thingy3D.name = "Thingy";
+              thingy3D.rotation._order = "XYZ";
+              scene.add(thingy3D);
+            });
+        });   
+        // Add canvas renderer
+        renderer = new THREE.WebGLRenderer();
+          renderer.setPixelRatio(window.devicePixelRatio);
+          renderer.setSize(200, 200);
+          renderer.setClearColor(new THREE.Color("hsl(0, 0%, 10%)"));
+          container.appendChild(renderer.domElement);         
+        };
+        
+        function render(){
+          id = requestAnimationFrame(render);
+          if(thingy3D){
+            let xyz = new THREE.Euler(this.x, this.y, this.z);
+            thingy3D.setRotationFromEuler(xyz);
+            thingy3D.updateMatrix();
+          }
+          renderer.render(scene, camera);        
+        };
+        
+        function stopAnimation(){
+          cancelAnimationFrame( id );
+        };
+      }
+    });
+
+    getRadians = function(degrees){
+      return degrees * Math.PI / 180;
+    };
+
+  </script>
+</dom-module>

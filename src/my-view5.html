@@ -1,0 +1,163 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="my-view5">
+
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      .flex-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .flex-item {
+        flex: 1 1 25%;
+      }      
+      .big {
+        --iron-icon-height: 60px;
+        --iron-icon-width: 60px;
+        --iron-icon-fill-color: var(--paper-green-300);
+      }
+      .sample {
+        --iron-icon-height: 60px;
+        --iron-icon-width: 60px;
+        --iron-icon-fill-color: var(--paper-purple-300);
+      }
+
+    </style>
+    
+    <paper-card>
+      <div class="card-content">
+        <h3>Stream audio</h3>
+      <p>Select a 8 kHz uncompressed signed 16-bit PCM mono WAV (Windows) file.</p>
+        <paper-input type="file" id="filepicker" on-change="readSingleFile"></paper-input>
+        <br>
+        <paper-button raised on-tap="playPCM">PLAY</paper-button>
+        <paper-button raised on-tap="stopPCM">STOP</paper-button>
+      </div>
+    </paper-card>    
+      
+    <paper-card>
+      <div class="card-content">
+      <h3>Play samples</h3>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="0"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="1"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="2"></iron-icon></div>
+        </div>
+        <br>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="3"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="4"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="5"></iron-icon></div>
+        </div>
+        <br>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="6"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="7"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="sample" icon="av:album" on-tap="playSample" sample="8"></iron-icon></div>
+        </div>          
+      </div>
+    </paper-card>
+    
+    <paper-card>
+      <div class="card-content">
+      <h3>Play tones</h3>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="523" duration="1000"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="587" duration="1000"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="659" duration="1000"></iron-icon></div>
+        </div>
+        <br>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="698" duration="1000"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="784" duration="1000"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="880" duration="1000"></iron-icon></div>
+        </div> 
+        <br>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="988" duration="1000"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="1047" duration="1000"></iron-icon></div>
+            <div class="flex-item" align="center"> <iron-icon class="big" icon="image:lens" on-tap="playSound" frequency="1175" duration="1000"></iron-icon></div>
+        </div>           
+      </div>
+    </paper-card>    
+    
+      
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'my-view5',
+      
+      properties: {
+        wavSample: {
+          type: Object
+        }
+      },
+      
+      playSound: function(event){
+        let frequency = event.currentTarget.getAttribute('frequency');
+        let duration = event.currentTarget.getAttribute('duration');
+        event.frequency = frequency;
+        event.duration = duration;
+        //console.log("Playing a sound with frequency " + frequency + ' for ' + duration + ' milliseconds');
+        this.fire('play-sound', event);
+      },
+      
+      playSample: function(event){
+        let sample = event.currentTarget.getAttribute('sample');
+        event.sample = sample;
+        //console.log("Playing sample " + sample);
+        this.fire('play-sample', event);
+      },
+      
+      playPCM: function(event){
+        if(this.wavSample == undefined){
+          console.log("No wav sample loaded. Please try again");
+          return;
+        }
+        event.sample = this.wavSample;
+        //console.log('wav: ' + this.wavSample);
+        this.fire('play-PCM', event);
+      },
+
+      stopPCM: function(){
+        this.fire('stop-PCM');
+      },
+      
+      readSingleFile: function(event){
+        let self = this;
+        let file = this.$.filepicker.inputElement.files[0];
+        if (!file) {
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(event) {
+          let wav = event.target.result;
+          //self.playPCM(wav);
+          self.wavSample = wav;
+        };
+        reader.readAsArrayBuffer(file);        
+      }
+      
+    });
+
+  </script>
+
+</dom-module>

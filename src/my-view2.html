@@ -1,0 +1,87 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view2">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }    
+      paper-card {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+      }
+      .flex-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        padding-bottom: 5px;
+        padding-top: 5px;
+      }
+      .flex-item {
+        font-size: 16px;
+      }
+      hr { 
+        border: 0; 
+        height: 1px; 
+        background-image: -webkit-linear-gradient(left, #f0f0f0, #bbb, #f0f0f0);
+        background-image: -moz-linear-gradient(left, #f0f0f0, #bbb, #f0f0f0);
+        background-image: -ms-linear-gradient(left, #f0f0f0, #bbb, #f0f0f0);
+        background-image: -o-linear-gradient(left, #f0f0f0, #bbb, #f0f0f0); 
+      }      
+
+      
+    </style>
+  
+    <paper-card>
+      <div class="card-content">
+        <h3>3D</h3>
+      <my-3d euler-x={{eulerPitch}} euler-y={{eulerYaw}} euler-z={{eulerRoll}} obj-file-name="path/my3dmodel.obj"></my-3d>
+      </div>
+    </paper-card>
+
+    <paper-card>
+      <div class="card-content">
+        <h3>Motion</h3>
+        <div class="flex-container">
+            <div class="flex-item"> <iron-icon icon="maps:directions-walk"></iron-icon> Pedometer</div>
+            <div class="flex-item" align="right"> {{pedometerSteps}}</div>
+        </div>
+        <hr>
+        <div class="flex-container">
+            <div class="flex-item"> <iron-icon icon="icons:touch-app"></iron-icon> Tap</div>
+            <div class="flex-item" align="right"> {{tap}}</div>
+        </div> 
+        <hr>       
+        <div class="flex-container">
+            <div class="flex-item"> <iron-icon icon="icons:explore"> </iron-icon> Heading</div>
+            <div class="flex-item" align="right"> {{heading}}</div>
+        </div>  
+        <hr>   
+        <div class="flex-container">
+            <div class="flex-item"> <iron-icon icon="image:transform"></iron-icon> Orientation</div>
+            <div class="flex-item" align="right"> {{orientation}}</div>
+        </div>            
+      </div>
+    </paper-card> 
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view2',
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,2085 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/iron-icons/maps-icons.html">
+<link rel="import" href="../bower_components/iron-icons/device-icons.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../bower_components/iron-icons/notification-icons.html">
+<link rel="import" href="../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../bower_components/platinum-bluetooth/platinum-bluetooth-elements.html">
+<link rel="import" href="my-3d/my-3d.html">
+<link rel="import" href="my-chart/my-chart.html">
+
+
+<link rel="import" href="my-icons.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-app">
+
+  <template>
+<style include="shared-styles"></style>
+    <style>
+
+      :host {
+        display: block;
+        --app-primary-color: #009cde;
+        --app-secondary-color: black;
+        --app-accent-color: #da7400;
+      }
+
+      app-header {
+        background-color: var(--app-primary-color);
+        color: #fff;
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        line-height: 40px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+      }
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+      .drawer-list a.subroute {
+        padding-left: 32px;
+      }
+      
+      .header-logo {
+        padding-left: 30px;
+      }
+      
+      #warningToast {
+        --paper-toast-background-color: var(--paper-red-500);
+        --paper-toast-color: white;
+      }     
+      
+      #successToast {
+        --paper-toast-background-color: var(--paper-green-500);
+        --paper-toast-color: white;
+      }   
+      
+      #infoToast {
+        --paper-toast-background-color: #009cde;
+        --paper-toast-color: white;
+      } 
+      
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--app-accent-color);
+        --paper-progress-secondary-color: #eeeeee; 
+        visibility: hidden;
+      }
+      
+      .scrollable {
+        height: 100%; 
+        overflow: auto;
+      }
+
+      paper-dialog {
+        min-width: 275px;
+      }
+      
+    </style>
+
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <app-drawer-layout fullbleed> 
+      <app-drawer>
+        <div class="scrollable">
+          <app-toolbar></app-toolbar>
+          <img class="header-logo" src="../images/manifest/icon-192x192.png" width="192px">
+          <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <paper-menu>
+            <a name="view1" href="/thingy/52#/view1">
+              <paper-icon-item drawer-toggle>
+                <iron-icon icon="image:wb-sunny" item-icon></iron-icon>
+                Environment
+              </paper-icon-item>
+            </a>
+            <a name="view2" href="/thingy/52#/view2">
+              <paper-icon-item drawer-toggle>
+                <iron-icon icon="3d-rotation" item-icon></iron-icon>
+                Motion
+              </paper-icon-item>
+            </a>
+            <a name="view3" href="/thingy/52#/view3">
+              <paper-icon-item drawer-toggle>
+                <iron-icon icon="device:widgets" item-icon></iron-icon>
+                UI
+              </paper-icon-item>
+            </a>
+            <a name="view4" href="/thingy/52#/view4">
+              <paper-icon-item drawer-toggle>
+                <iron-icon icon="settings" item-icon></iron-icon>
+                Configuration
+              </paper-icon-item>
+            </a>
+            <a name="view5" href="/thingy/52#/view5">
+              <paper-icon-item drawer-toggle>
+                <iron-icon icon="av:album" item-icon></iron-icon>
+                Sound
+              </paper-icon-item>
+            </a>  
+            <a name="view6" href="/thingy/52#/view6">
+              <paper-icon-item drawer-toggle>
+                <iron-icon icon="icons:dashboard" item-icon></iron-icon>
+                IFTTT
+              </paper-icon-item>
+            </a>                   
+          </paper-menu>
+          </iron-selector>
+        </div>
+      </app-drawer>
+      
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+        <app-header condenses fixed effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div title>{{pageTitle}}</div>
+            <!-- span will take up all space between paper-icon-button and paper-button-->
+            <span style="flex: 1;"></span>
+            <paper-button id="btnConnect" on-tap="_connectOrDisconnect">CONNECT</paper-button>
+            <paper-progress id="progress" indeterminate bottom-item role="progressbar"> </paper-progress>
+          </app-toolbar>        
+        </app-header>
+
+        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+          <my-view1 name="view1"></my-view1>
+          <my-view2 name="view2"></my-view2>
+          <my-view3 name="view3"></my-view3>
+          <my-view4 name="view4"></my-view4>
+          <my-view5 name="view5"></my-view5>
+          <my-view6 name="view6"></my-view6>
+          <my-view7 name="view7"></my-view7>
+        </iron-pages>
+
+      </app-header-layout>
+    </app-drawer-layout>
+    
+    <paper-dialog id="nameConfiguration" modal>
+      <h2>Thingy name</h2>
+      <paper-input label="{{pageTitle}}" id="inputDeviceName" char-counter maxlength="10"></paper-input>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeDeviceName">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>
+      
+    <paper-dialog id="advertisingConfiguration" modal>
+      <h2>Advertising parameters</h2>
+        <paper-input label="Advertisement interval" id="inputAdvertisementInterval" auto-validate type="number" min="20" max="4000" allowed-pattern="[0-9]" error-message="Valid values 20-4000"><div suffix> ms</div></paper-input>
+        <paper-input label="Advertisement timeout" id="inputAdvertisementTimeout" auto-validate type="number" allowed-pattern="[0-9]" min="0" max="180" error-message="Valid values 0-180"><div suffix> s</div></paper-input>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeAdvertisingParameters">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>  
+    
+    <paper-dialog id="connectionConfiguration" modal>
+      <h2>Connection parameters</h2>
+      <paper-dialog-scrollable>
+        <paper-input label="Minimum connection interval" id="inputMinConnectionInterval" auto-validate type="number" min="8" max="4000" allowed-pattern="[0-9]" error-message="Valid values 8-4000"><div suffix> ms</div></paper-input>
+        <paper-input label="Maximum connection interval" id="inputMaxConnectionInterval" auto-validate type="number" min="8" max="4000" allowed-pattern="[0-9]" error-message="Valid values 8-4000"><div suffix> ms</div></paper-input>
+        <paper-input label="Slave latency" id="inputSlaveLatency" auto-validate type="number" min="0" max="499" allowed-pattern="[0-9]" error-message="Valid values 0-499"><div suffix> intervals</div></paper-input>    
+        <paper-input label="Supervision timeout" id="inputSupervisionTimeout" auto-validate type="number" min="100" max="32000" allowed-pattern="[0-9]" error-message="Valid values 100-32000"><div suffix> ms</div></paper-input>  
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeConnectionParameters">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>    
+    
+    <paper-dialog id="eddystoneConfiguration" modal>
+      <h2>Eddystone URL</h2>
+      <paper-dropdown-menu label="Prefix">
+        <paper-listbox class="dropdown-content" id="inputPrefixList">
+          <paper-item>http://www.</paper-item>
+          <paper-item>https://www.</paper-item>
+          <paper-item>http://</paper-item>
+          <paper-item>https://</paper-item>
+        </paper-listbox>
+      </paper-dropdown-menu>
+      <paper-input label="URL" id="inputUrl" char-counter maxlength="17"></paper-input>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeEddystone">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>  
+    
+    <paper-dialog id="cloudTokenConfiguration" modal>
+      <h2>Cloud token</h2>
+      <paper-input label="Token" id="inputCloudToken" char-counter maxlength="250"></paper-input>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeCloudToken">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>
+    
+    <paper-dialog id="environmentSensorConfiguration" modal>
+      <h2>Environment sensors</h2>
+      <paper-dialog-scrollable>
+        <paper-input label="Temperature interval" id="inputTemperatureInterval" auto-validate type="number" min="100" max="5000" allowed-pattern="[0-9]" error-message="Valid values 100-5000"><div suffix> ms</div></paper-input>
+        <paper-input label="Pressure interval" id="inputPressureInterval" auto-validate type="number" min="50" max="5000" allowed-pattern="[0-9]" error-message="Valid values 50-5000"><div suffix> ms</div></paper-input>
+        <paper-input label="Humidity interval" id="inputHumidityInterval" auto-validate type="number" min="100" max="5000" allowed-pattern="[0-9]" error-message="Valid values 100-5000"><div suffix> ms</div></paper-input>
+        <paper-input label="Air quality interval" id="inputGasInterval" auto-validate type="number" min="1" max="60" allowed-pattern="[0-9]" error-message="Valid values 1, 10 60"><div suffix> s</div></paper-input>    
+        <paper-input label="Color interval" id="inputColorInterval" auto-validate type="number" min="200" max="5000" allowed-pattern="[0-9]" error-message="Valid values 100-5000"><div suffix> ms</div></paper-input>
+        <paper-input label="Color calibration Red" id="inputColorCalibrationRed" auto-validate type="number" min="0" max="255" allowed-pattern="[0-9]" error-message="Valid values 0-255"><div suffix> intensity</div></paper-input>
+        <paper-input label="Color calibration Green" id="inputColorCalibrationGreen" auto-validate type="number" min="0" max="255" allowed-pattern="[0-9]" error-message="Valid values 0-255"><div suffix> intensity</div></paper-input>
+        <paper-input label="Color calibration Blue" id="inputColorCalibrationBlue" auto-validate type="number" min="0" max="255" allowed-pattern="[0-9]" error-message="Valid values 0-255"><div suffix> intensity</div></paper-input>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeEnvironmentSensorConfiguration">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>     
+
+    <paper-dialog id="motionSensorConfiguration" modal>
+      <h2>Motion Sensor intervals</h2>
+      <paper-dialog-scrollable>
+        <paper-input label="Pedometer" id="inputPedometerInterval" auto-validate type="number" min="100" max="5000" allowed-pattern="[0-9]" error-message="Valid values 100-5000"><div suffix> ms</div></paper-input>  
+        <paper-input label="Temperature compensation" id="inputTemperatureCompensationInterval" auto-validate type="number" min="100" max="5000" allowed-pattern="[0-9]" error-message="Valid values 100-5000"><div suffix> ms</div></paper-input>    
+        <paper-input label="Compass compensation" id="inputCompassCompensationInterval" auto-validate type="number" min="100" max="5000" allowed-pattern="[0-9]" error-message="Valid values 100-5000"><div suffix> ms</div></paper-input>  
+        <paper-input label="Motion" id="inputMotionInterval" auto-validate type="number" min="1" max="200" allowed-pattern="[0-9]" error-message="Valid values 1-200"><div suffix> Hz</div></paper-input>  
+        <paper-input label="Wake on motion" id="inputWakeOnMotion" auto-validate type="number" min="0" max="1" allowed-pattern="[0-1]" error-message="Valid values 0-1"><div suffix> on/off</div></paper-input> 
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeMotionSensorConfiguration">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>  
+
+    <paper-dialog id="iftttConfiguration" modal>
+      <h2>IFTTT Key</h2>
+      <paper-input label="{{iftttKeyStorage.key}}" id="inputIftttKey" char-counter maxlength="32"></paper-input>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeIftttKey">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>     
+
+    <paper-dialog id="mtuConfiguration" modal>
+      <h2>Maximum Transmission Unit</h2>
+        <paper-input label="{{mtu}}" id="inputMtu" auto-validate type="number" min="23" max="276" allowed-pattern="[0-9]" error-message="Valid values 23-276"><div suffix> Bytes</div></paper-input>
+      <div class="buttons">
+        <paper-button dialog-confirm>CLOSE</paper-button>
+        <paper-button on-tap="writeMtu">CONFIRM</paper-button>
+      </div>
+    </paper-dialog>         
+
+    <paper-toast id="warningToast" class="fit-bottom" duration="0" text="Default text. If you see this text a message failed to display.">
+      <paper-button on-tap='closeWarningToast'>Close</paper-button>
+    </paper-toast>  
+    
+    <paper-toast id="successToast" class="fit-bottom" duration="2000" text="Default text. If you see this text a message failed to display.">
+
+    </paper-toast>     
+    
+    <paper-toast id="infoToast" class="fit-bottom" duration="3000" text="Default text. If you see this text a message failed to display.">
+      <paper-button on-tap='closeInfoToast'>Close</paper-button>
+    </paper-toast>         
+    
+    <platinum-bluetooth-device id='device' 
+                               services-filter='["ef680100-9b35-4933-9b10-52ffa9740042"]'
+                               optional-services-filter='["ef680200-9b35-4933-9b10-52ffa9740042", 
+                                                          "ef680300-9b35-4933-9b10-52ffa9740042",
+                                                          "ef680400-9b35-4933-9b10-52ffa9740042",
+                                                          "ef680500-9b35-4933-9b10-52ffa9740042"]'>
+      
+      <!-- Configuration -->
+      <platinum-bluetooth-service service='ef680100-9b35-4933-9b10-52ffa9740042'>
+        <platinum-bluetooth-characteristic id='devicename' 
+                                           value={{deviceName}} 
+                                           characteristic='ef680101-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='advertisingParameters' 
+                                           value={{advertisingParameters}} 
+                                           characteristic='ef680102-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='connectionParameters' 
+                                           value={{connectionParameters}} 
+                                           characteristic='ef680104-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='eddystoneUrl' 
+                                           value={{eddystoneUrl}} 
+                                           characteristic='ef680105-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='cloudToken' 
+                                           value={{cloudToken}} 
+                                           characteristic='ef680106-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='firmwareVersion' 
+                                           value={{firmwareVersion}} 
+                                           characteristic='ef680107-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic> 
+        <platinum-bluetooth-characteristic id='mtuRequest' 
+                                           value={{mtuRequest}} 
+                                           characteristic='ef680108-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>         
+      </platinum-bluetooth-service>
+      
+      <!-- Environment -->
+      <platinum-bluetooth-service service='ef680200-9b35-4933-9b10-52ffa9740042'>
+        <platinum-bluetooth-characteristic id='temperature' 
+                                           value={{temperature}} 
+                                           characteristic='ef680201-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='pressure' 
+                                           value={{pressure}} 
+                                           characteristic='ef680202-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='humidity' 
+                                           value={{humidity}} 
+                                           characteristic='ef680203-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='gas' 
+                                           value={{gas}} 
+                                           characteristic='ef680204-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='color' 
+                                           value={{color}} 
+                                           characteristic='ef680205-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='environmentConfiguration' 
+                                           value={{environmentConfiguration}} 
+                                           characteristic='ef680206-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>        
+      </platinum-bluetooth-service>
+      
+      <!-- Motion -->
+      <platinum-bluetooth-service service='ef680400-9b35-4933-9b10-52ffa9740042'>
+        <platinum-bluetooth-characteristic id='motionConfiguration' 
+                                           value={{motionConfiguration}} 
+                                           characteristic='ef680401-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='tap' 
+                                           value={{tap}} 
+                                           characteristic='ef680402-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='orientation' 
+                                           value={{orientation}} 
+                                           characteristic='ef680403-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='quaternion' 
+                                           value={{quaternion}} 
+                                           characteristic='ef680404-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='pedometer' 
+                                           value={{pedometer}} 
+                                           characteristic='ef680405-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='rawData' 
+                                           value={{rawData}}  
+                                           characteristic='ef680406-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>  
+        <platinum-bluetooth-characteristic id='euler' 
+                                           value={{euler}} 
+                                           characteristic='ef680407-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic> 
+        <platinum-bluetooth-characteristic id='rotationMatrix' 
+                                           value={{rotationMatrix}} 
+                                           characteristic='ef680408-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic> 
+        <platinum-bluetooth-characteristic id='heading' 
+                                           value={{heading}} 
+                                           characteristic='ef680409-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic> 
+        <platinum-bluetooth-characteristic id='gravityVector' 
+                                           value={{gravityVector}} 
+                                           characteristic='ef68040a-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>         
+      </platinum-bluetooth-service>      
+      
+      <!-- User interface -->
+      <platinum-bluetooth-service service='ef680300-9b35-4933-9b10-52ffa9740042'>
+        <platinum-bluetooth-characteristic id='led' 
+                                           value={{led}} 
+                                           characteristic='ef680301-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='button' 
+                                           value={{button}} 
+                                           characteristic='ef680302-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+      </platinum-bluetooth-service>   
+      
+      <!-- Sound -->
+      <platinum-bluetooth-service service='ef680500-9b35-4933-9b10-52ffa9740042'>
+        <platinum-bluetooth-characteristic id='soundConfiguration' 
+                                           value={{soundConfiguration}} 
+                                           characteristic='ef680501-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='speaker' 
+                                           value={{speaker}} 
+                                           characteristic='ef680502-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='speakerStatus' 
+                                           value={{speakerStatus}} 
+                                           characteristic='ef680503-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>
+        <platinum-bluetooth-characteristic id='microphone' 
+                                           value={{microphone}} 
+                                           characteristic='ef680504-9b35-4933-9b10-52ffa9740042'>
+        </platinum-bluetooth-characteristic>          
+      </platinum-bluetooth-service>         
+      
+    </platinum-bluetooth-device>
+
+    <iron-localstorage name="thingy-app-storage"
+      value="{{iftttKeyStorage}}"
+      on-iron-localstorage-load-empty="initializeDefaultIftttKey">
+    </iron-localstorage>
+
+    <iron-ajax
+        id="xhr"       
+        url="https://maker.ifttt.com/trigger/{{iftttEvent}}/with/key/{{iftttKeyStorage.key}}"
+        params='{"not":"relevant"}'
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="10000">
+    </iron-ajax>  
+    
+    <iron-ajax
+        id="ifttt"  
+        method="POST"
+        url="https://maker.ifttt.com/trigger/{{iftttEvent}}/with/key/{{iftttKeyStorage.key}}"
+        handle-as="text"
+        params='{"value1":"55", "value2":"66", "value3":"77"}'
+        on-request="_handleIftttRequest"
+        on-response="_handleIftttResponse"
+        on-error="_handleIftttError">
+    </iron-ajax>    
+
+  </template>
+
+  <script>
+    
+    let views = {};
+    let thingy = {};
+    let activePage = '';
+    let oldPage = '';
+    let speakerStatusReady = true;
+    
+    Polymer({
+
+      is: 'my-app',
+
+      properties: {
+
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+
+        pageTitle: {
+          type: String,
+          value: 'Thingy'
+        },
+        
+        isConnected: {
+          type: Boolean,
+          value: false,
+          observer: '_isConnectedChanged'
+        },
+        
+        deviceName: {
+          type: String,
+          observer: '_devicenameChanged'
+        },
+        
+        advertisingParameters: {
+          type: String,
+          observer: '_advertisingParameterChanged'
+        },
+        
+        connectionParameters: {
+          type: String,
+          observer: '_connectionParameterChanged'
+        },
+        
+        eddystoneUrl: {
+          type: String,
+          observer: '_eddystoneUrlChanged'
+        },
+        
+        cloudToken: {
+          type: String,
+          observer: '_cloudTokenChanged'
+        },
+        
+        firmwareVersion: {
+          type: String,
+          observer: '_firmwareVersionChanged'
+        },  
+        
+        mtuRequest: {
+          type: String,
+          observer: '_mtuRequestChanged'
+        },          
+        
+        temperature: {
+          type: String,
+          observer: '_temperatureChanged'
+        },    
+        
+        pressure: {
+          type: String,
+          observer: '_pressureChanged'
+        },    
+        
+        humidity: {
+          type: String,
+          observer: '_humidityChanged'
+        },    
+        
+        gas: {
+          type: String,
+          observer: '_gasChanged'
+        },    
+        
+        color: {
+          type: String,
+          observer: '_colorChanged'
+        },    
+        
+        environmentConfiguration: {
+          type: String,
+          observer: '_environmentConfigurationChanged'
+        },
+        
+        motionConfiguration: {
+          type: String,
+          observer: '_motionConfigurationChanged'
+        },
+
+        tap: {
+          type: String,
+          observer: '_tapChanged'
+        },
+        
+        orientation: {
+          type: String,
+          observer: '_orientationChanged'
+        },
+        
+        quaternion: {
+          type: String,
+          observer: '_quaternionChanged'
+        },
+        
+        pedometer: {
+          type: String,
+          observer: '_pedometerChanged'
+        },
+        
+        rawData: {
+          type: String,
+          observer: '_rawDataChanged'
+        },
+        
+        euler: {
+          type: String,
+          observer: '_eulerChanged'
+        },
+        
+        rotationMatrix: {
+          type: String,
+          observer: '_rotationMatrixChanged'
+        },
+        
+        heading: {
+          type: String,
+          observer: '_headingChanged'
+        },
+      
+        gravityVector: {
+          type: String,
+          observer: '_gravityVectorChanged'
+        },  
+        
+        led: {
+          type: String,
+          observer: '_ledChanged'
+        }, 
+      
+        button: {
+          type: String,
+          observer: '_buttonChanged'
+        }, 
+            
+        soundConfiguration: {
+          type: String,
+          observer: '_soundConfigurationChanged'
+        }, 
+            
+        speaker: {
+          type: String,
+          observer: '_speakerChanged'
+        },
+        
+        speakerStatus: {
+          type: String,
+          observer: '_speakerStatusChanged',
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        pcmStatus: {
+          type: Number,
+          value: 1
+        },
+            
+        microphone: {
+          type: String,
+          observer: '_microphoneChanged'
+        },
+        
+        iftttEvent: {
+          type: String,
+          value: "change-this-value"
+        },
+        
+        iftttKey: {
+          type: String,
+          value: "paste your key here"
+        },
+
+        iftttKeyStorage: {
+          type: Object
+        },
+        
+        iftttTemperature: {
+          type: String,
+          value: "1"
+        },
+        
+        iftttHumidity: {
+          type: String,
+          value: "2"
+        },
+      
+        iftttPressure: {
+          type: String,
+          value: "3"
+        }      
+      },
+            
+      listeners: {
+        'show-configuration-dialog': 'showConfigurationDialog',
+        'play-sound': 'playSound',
+        'play-sample': 'playSample',
+        'play-PCM': 'playPCM',
+        'stop-PCM': 'stopPCM',
+        'change-LED': 'writeLED',
+        'change-ifttt-event': 'updateIftttEvent'
+      },
+
+      observers: [
+        '_routePageChanged(routeData.page)'
+      ],
+
+      _routePageChanged: function(page) {
+        let self = this;
+        this.page = page || 'view1';
+        activePage = this.page;
+        
+        if(activePage == oldPage){
+          //console.log('activePage and newPage are equal: ' + activePage + oldPage);
+          return;
+        };
+        
+        oldPage = activePage;
+        
+        //console.log(this.page);       
+
+        if(self.isConnected){
+          return self._stopAllNotifications()
+          .then(function(){
+            if(activePage == 'view1'){
+              self._startEnvironmentNotifications();
+            }
+            else if(activePage == 'view2'){
+              self._startMotionNotifications();
+            }
+            else if(activePage == 'view3'){
+              self._startUserInterfaceNotifications();
+            }
+            else if(activePage == 'view4'){
+              self.readConfigurationData();
+            }
+            else if(activePage == 'view5'){
+              self.startSpeakerNotifications();
+            }    
+            else if(activePage == 'view6'){
+              self.readIFTTTData();
+            }              
+          })
+          .catch(function(error){
+            console.log(error);
+            self.showWarningToast(error.toString());
+          });
+        }
+      },
+
+      _pageChanged: function(page) {
+        // load page import on demand.
+        this.importHref(
+          this.resolveUrl('my-' + page + '.html'), null, null, true);
+      },
+      
+      showConfigurationDialog: function(event){
+        let dialogName = event.detail.id;
+        this.$[dialogName].open();
+      },
+      
+      writeDeviceName: function(){
+        let self = this;
+        let newName = this.$.inputDeviceName.value;
+        let encoder = new TextEncoder('utf-8').encode(newName);
+        return thingy.deviceName.write(encoder)
+        .then(function(){
+          //console.log('A new device name was written: ' + newName);
+          self.showSuccessToast("SUCCESS");
+          // A read() triggers an event handler which updates values in app
+          thingy.deviceName.read();
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })
+      },
+      
+      writeAdvertisingParameters: function(){
+        let interval = this.$.inputAdvertisementInterval;
+        let timeout = this.$.inputAdvertisementTimeout;
+        
+        // check if data is valid
+        if(interval.__data__.invalid || timeout.__data__.invalid){
+          this.showWarningToast("Invalid data. Please type a value within specified range.");
+          return;
+        }
+        
+        let parameters = new Uint8Array(3);
+        // convert ms to steps. 1 step = 0.625ms.
+        let step = interval.value / 0.625;;
+        parameters[0] = step & 0xFF;
+        parameters[1] = (step >> 8) & 0xFF;
+        parameters[2] = timeout.value;
+        let self = this;
+        return thingy.advertisingParameters.write(parameters)
+        .then(function(){
+          console.log('Advertising parameters updated: ' + parameters);
+          self.showSuccessToast("SUCCESS");
+          // A read() triggers an event handler which updates values in app
+          //thingy.advertisingParameters.read();
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })        
+      },
+
+      writeEnvironmentSensorConfiguration: function(){
+        let temperatureInterval = this.$.inputTemperatureInterval;
+        let pressureInterval = this.$.inputPressureInterval;
+        let humidityInterval = this.$.inputHumidityInterval;
+        let colorInterval = this.$.inputColorInterval;
+        let gasInterval = this.$.inputGasInterval;
+        let redCalibration = this.$.inputColorCalibrationRed;
+        let greenCalibration = this.$.inputColorCalibrationGreen;
+        let blueCalibration = this.$.inputColorCalibrationBlue;
+
+        // check if data is valid
+        if(temperatureInterval.__data__.invalid || pressureInterval.__data__.invalid || humidityInterval.__data__.invalid || gasInterval.__data__.invalid || colorInterval.__data__.invalid || redCalibration.__data__.invalid || greenCalibration.__data__.invalid || blueCalibration.__data__.invalid){
+          this.showWarningToast("Invalid data. Please type a value within specified range.");
+          return;
+        }
+
+        let configuration = new Uint8Array(12);
+        configuration[0] = temperatureInterval.value & 0xFF;
+        configuration[1] = (temperatureInterval.value >> 8) & 0xFF;
+        configuration[2] = pressureInterval.value & 0xFF;
+        configuration[3] = (pressureInterval.value >> 8) & 0xFF;
+        configuration[4] = humidityInterval.value & 0xFF;
+        configuration[5] = (humidityInterval.value >> 8) & 0xFF;
+        configuration[6] = colorInterval.value & 0xFF;
+        configuration[7] = (colorInterval.value >> 8) & 0xFF;
+        configuration[8] = gasInterval.value;
+        configuration[9] = redCalibration.value;
+        configuration[10] = greenCalibration.value;
+        configuration[11] = blueCalibration.value;
+        //console.log('Env configuration data' + configuration);
+        let self = this;
+        return thingy.environmentConfiguration.write(configuration)
+        .then(function(){
+          //console.log('Environment configuration updated: ' + configuration);
+          self.showSuccessToast("SUCCESS");
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })           
+      },
+
+      writeMotionSensorConfiguration: function(){
+        let pedometerInterval = this.$.inputPedometerInterval;
+        let temperatureCompInterval = this.$.inputTemperatureCompensationInterval;
+        let compassCompInterval = this.$.inputCompassCompensationInterval;
+        let motionInterval = this.$.inputMotionInterval;
+        let wakeOnMotion = this.$.inputWakeOnMotion;
+
+        // check if data is valid
+        if(pedometerInterval.__data__.invalid || temperatureCompInterval.__data__.invalid || compassCompInterval.__data__.invalid || motionInterval.__data__.invalid || wakeOnMotion.__data__.invalid){
+          this.showWarningToast("Invalid data. Please type a value within specified range.");
+          return;
+        }
+
+        let configuration = new Uint8Array(9);
+        configuration[0] = pedometerInterval.value & 0xFF;
+        configuration[1] = (pedometerInterval.value >> 8) & 0xFF;
+        configuration[2] = temperatureCompInterval.value & 0xFF;
+        configuration[3] = (temperatureCompInterval.value >> 8) & 0xFF;
+        configuration[4] = compassCompInterval.value & 0xFF;
+        configuration[5] = (compassCompInterval.value >> 8) & 0xFF;
+        configuration[6] = motionInterval.value & 0xFF;
+        configuration[7] = (motionInterval.value >> 8) & 0xFF;
+        configuration[8] = wakeOnMotion.value;
+
+        let self = this;
+        return thingy.motionConfiguration.write(configuration)
+        .then(function(){
+          //console.log('Motion configuration updated: ' + configuration);
+          self.showSuccessToast("SUCCESS");
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })           
+      },      
+      
+      writeConnectionParameters: function(){
+        let timeout = this.$.inputSupervisionTimeout;
+        let latency = this.$.inputSlaveLatency;
+        let min = this.$.inputMinConnectionInterval;
+        let max = this.$.inputMaxConnectionInterval;
+        
+        // check if data is valid
+        if(timeout.__data__.invalid || latency.__data__.invalid || min.__data__.invalid || max.__data__.invalid){
+          this.showWarningToast("Invalid data. Please type a value within specified range.");
+          return;
+        }
+        
+        // convert from ms to steps. 1 step = 10ms.
+        let timeoutStep = timeout.value / 10; 
+        // convert from ms to steps. 1 step = 1.25ms.
+        let minStep = min.value / 1.25;
+        let maxStep = max.value / 1.25;
+        
+        let parameters = new Uint8Array(8);
+        parameters[0] = minStep & 0xFF;
+        parameters[1] = (minStep >> 8) & 0xFF;
+        parameters[2] = maxStep & 0xFF;
+        parameters[3] = (maxStep >> 8) & 0xFF;
+        parameters[4] = latency.value & 0xFF;
+        parameters[5] = (latency.value >> 8) & 0xFF;
+        parameters[6] = timeoutStep & 0xFF;
+        parameters[7] = (timeoutStep >> 8) & 0xFF;
+        
+        let self = this;
+        return thingy.connectionParameters.write(parameters)
+        .then(function(){
+          //console.log('Connection parameters updated: ' + parameters);
+          self.showSuccessToast("SUCCESS");
+          // A read() triggers an event handler which updates values in app
+          //thingy.connectionParameters.read();
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })                   
+      },
+      
+      writeEddystone: function(){
+        let self = this;
+        let url = this.$.inputUrl;
+        let scheme = this.$.inputPrefixList.selected;
+        
+        // check if data is invalid
+        if(url.__data__.invalid){
+          this.showWarningToast("Invalid data. Please type a valid URL.");
+          return;
+        }
+
+        // create new Uint8Array with the correct size to hold complete url
+        let data = new Uint8Array(1 + url.value.length);
+        let urlUtf8 = new TextEncoder('utf-8').encode(url.value);
+        data[0] = scheme;
+        // Add url formatted as Uint8Array from offset 1
+        data.set(urlUtf8, 1);
+        
+       //console.log("Scheme to write: " + scheme);
+       //console.log("URL to write: " + url.value);
+       //console.log("url data array" + data);
+        
+        return thingy.eddystoneUrl.write(data)
+        .then(function(){
+          //console.log('A new Eddystone URL was written: ' + data);
+          self.showSuccessToast("SUCCESS");
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })          
+      },
+      
+      writeCloudToken: function(){
+        let self = this;
+        let token = this.$.inputCloudToken.value;
+        let encoder = new TextEncoder('utf-8').encode(token);
+        return thingy.cloudToken.write(encoder)
+        .then(function(){
+          //console.log('A new cloud token name was written: ' + token);
+          self.showSuccessToast("SUCCESS");
+          // A read() triggers an event handler which updates values in app
+          // thingy.deviceName.read();
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })
+      },
+
+      writeIftttKey: function(){
+        let key = this.$.inputIftttKey.value;
+        this.set('iftttKeyStorage.key', key);
+        this.showSuccessToast("KEY SAVED IN LOCAL STORAGE");
+      },      
+      
+      // The Web Bluetooth API has no way of requesting a change in Maximum Transmission Unit (MTU).
+      // This characteristic was added in firmware to allow the user to request a change in MTU.
+      // The default MTU is 20 Bytes. A larger MTU is necessary for audio transmissions.
+      // Thingy firmware supports a maximum MTU of 276 Bytes.
+      writeMtuRequest: function() {
+        let self = this;
+        let mtu = 276;
+        let data = new Uint8Array(3);
+        data[0] = 1;    // Send MTU request
+        data[1] = mtu & 0xFF;
+        data[2] = (mtu >> 8) & 0xFF;     
+        console.log("Attempting to write new MTU: " + data);
+        return thingy.mtu.write(data)
+        .then(function(){
+          console.log("A new MTU request of " + mtu + " Bytes was written");
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })    
+      },
+
+      writeMtu: function(){
+        let self = this;
+        let mtu = this.$.inputMtu.value;
+        let data = new Uint8Array(3);
+        data[0] = 1;    // Send MTU request
+        data[1] = mtu & 0xFF;
+        data[2] = (mtu >> 8) & 0xFF;     
+        console.log("Attempting to write new MTU: " + data);
+        return thingy.mtu.write(data)
+        .then(function(){
+          console.log("A new MTU request of " + mtu + " Bytes was written");
+          self.showSuccessToast("SUCCESS");
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })   
+      },
+      
+      writeSoundConfiguration: function(){
+        let self = this;
+        let speakerMode = this.$.inputSpeakerModeList.selected;
+        let microphoneMode = this.$.inputMicrophoneModeList.selected;
+        // Add 1 to convert from app list index to firmware spec
+        speakerMode ++;
+        microphoneMode ++;
+        let data = new Uint8Array(2);
+        data[0] = speakerMode;
+        data[1] = microphoneMode;
+        
+        //console.log("Speaker mode to write: " + speakerMode);
+        //console.log("Microphone mode to write: " + microphoneMode);
+        
+        return thingy.soundConfiguration.write(data)
+        .then(function(){
+          //console.log('A new sound configuration was written: ' + data);
+          self.showSuccessToast("SUCCESS");
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })            
+      },
+      
+      writeLED: function(event){
+        let self = this;
+        let mode = event.detail.mode;
+        let color = event.detail.color;
+        let red = event.detail.red;
+        let green = event.detail.green;
+        let blue = event.detail.blue;
+        let intensity = 60; // %
+        let delay = 1000;   // ms
+        let data;
+        
+        if( mode == undefined ){
+          this.showWarningToast("Please select a mode.");
+          return;
+        }
+
+        // mode 0 = off
+        if(mode == 0){
+          data = new Uint8Array(1);
+          data[0] = mode;
+        }        
+
+        // mode 1 = constant
+        if(mode == 1){
+          data = new Uint8Array(4);
+          data[0] = mode;
+          data[1] = red;
+          data[2] = green;
+          data[3] = blue;
+        }
+
+        // mode 2 = breathe
+        if(mode == 2){
+          data = new Uint8Array(5);
+          data[0] = mode;
+          data[1] = color;
+          data[2] = intensity;
+          data[3] = delay & 0xFF;
+          data[4] = (delay >> 8) & 0xFF;
+        }  
+
+        // mode 2 = one shot
+        if(mode == 3){
+          data = new Uint8Array(3);
+          data[0] = mode;
+          data[1] = color;
+          data[2] = intensity;
+        }                   
+        
+        return thingy.led.write(data)
+        .then(function(){
+          //console.log('A new LED color was written: ' + data);
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })           
+      },
+      
+      writeSoundFrequency: function(f, d){
+        let self = this;
+        let frequency = parseInt(f);
+        let duration = parseInt(d);
+        let sound = new Uint8Array(5);
+        sound[0] = frequency & 0xFF;
+        sound[1] = (frequency >> 8) & 0xFF;
+        sound[2] = duration & 0xFF;
+        sound[3] = (duration >> 8) & 0xFF; 
+        sound[4] = 100; // volume hard coded to 100%
+        // configure speaker to use "frequency and duration" mode
+        let mode = new Uint8Array(2);
+        mode[0] = 1;
+        mode[1] = 1;
+        return thingy.soundConfiguration.write(mode)
+        .then(function(){
+          thingy.speaker.write(sound);
+        })
+        .then(function(){
+          //console.log('A new sound was written: ' + sound);
+          //self.showSuccessToast("SUCCESS");
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })        
+      },
+      
+      writeSoundSample: function(s){
+        let self = this;
+        let sample = parseInt(s);
+        //console.log("writing sound sample: " + sample);
+        let sound = new Uint8Array(1);
+        sound[0] = sample;
+        // configure speaker to use "sample" mode
+        let mode = new Uint8Array(2);
+        mode[0] = 3;
+        mode[1] = 1;
+        return thingy.soundConfiguration.write(mode)
+        .then(function(){
+          thingy.speaker.write(sound);
+        })        
+        .then(function(){
+          //console.log('A new sound was written: ' + sound);
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        })
+      },
+      
+      // Input is an Uint8Array
+      writeSoundPCM: function(wav8Array){        
+        let self = this;
+        let index = 0;  
+        let t0 = 0;
+        let t1 = 0;
+        let packetSize = 160;
+        let packets = 0;
+        let timer;
+        let retries = 0;
+        speakerStatusReady = true;
+
+        function writeSoundPCMBatch(resolve, reject){
+        // Can write max 273 Bytes (MTU) at a time to the characteristic.
+        // Writing with maximum data payload might result in Thingy speaker buffer filling up and packets will be dropped.
+        // Sending 160 Byte batches has proved to be reliable.
+        
+
+        // check if stop button was pressed
+        if(self.pcmStatus == 0){
+          self.pcmStatus = 1;
+          return;
+        }
+
+        if(speakerStatusReady == false){    
+          // Do a sanity check in case notifications have stopped whilst whe are retrying or we might en up in an endless loop of retries.
+          // If there are 10 retries in a row it probably means notifications have stopped.
+          //console.log('Retries = ' + retries);
+          if((retries > 0) && (retries % 10) == 0){
+            thingy.speakerStatus.startNotifications()
+            .then(function(){
+              //console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Restarted notifications");
+              retries = 0;
+            })
+            .catch(function(error){
+              console.log(error);
+            });
+          }
+          else{
+            retries++;
+          }
+          // Delay execution by 10ms if Thingy audio buffer is almost full
+          timer = setTimeout(function(){writeSoundPCMBatch(resolve, reject);}, 10); 
+        }
+        
+        // write 160 Byte chunks of 8-bit audio data to Thingy
+        else{  
+            if(index + packetSize < wav8Array.length) {
+              t0 = performance.now();
+              thingy.speaker.write(wav8Array.slice(index, index + packetSize))
+              .then(() => {
+                t1 = performance.now();
+                //console.log('Speaker 160 Byte write took ' + (t1-t0).toFixed(3) + ' ms. Packet#: ' + packets);
+                index += packetSize;
+                packets++;
+                // There is possibly a bug in Chrome that leads to the notification callback not firing. Happens irregularly.
+                // Restart notifications every 20 packets to make sure notifications are running.
+                // This does not add an audible delay to the aduio transmission.
+                if(packets % 20 == 0){
+                  thingy.speakerStatus.startNotifications()
+                  .then(function(){
+                    //console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Restarted notifications");
+                  })
+                  .catch(function(error){
+                    console.log(error);
+                  });                  
+                }
+                // reset retries on successfull write
+                retries = 0;
+                // Repeat
+                writeSoundPCMBatch(resolve, reject);              
+              })
+              .catch(error => console.log(error));
+            }
+            else{
+              // Send the last bytes
+              if(index < wav8Array.length){
+                //console.log("Sending last packet...");
+                t0 = performance.now();
+                thingy.speaker.write(wav8Array.slice(index, wav8Array.length - 1))
+                .then(() => {
+                  t1 = performance.now();
+                  //console.log('Speaker last packet write took ' + (t1-t0).toFixed(3) + ' ms');                
+                  resolve;
+                })
+                .catch(error => console.log(error));
+              }
+              else {
+                resolve;
+              }
+            }
+          }
+        }  
+
+        let data = new Uint8Array(2);
+        data[0] = 2;  // 2 = PCM speaker mode
+        data[1] = 1;  // 0 = ADPCM microphone mode
+        // set correct speaker mode before writing data
+        thingy.soundConfiguration.write(data)
+        .then(() => {
+          //console.log('A new sound configuration was written: ' + data);
+        })
+        .then (() => {
+           // make sure notifications are started
+           //console.log("Starting speakerStatus notifications");
+           return thingy.speakerStatus.startNotifications();    
+        })
+        .then(() => {
+          //console.log('writing PCM data...')
+          writeSoundPCMBatch()
+        })
+        .catch(error => {
+          console.log(error);
+          self.showWarningToast(error.toString());
+        }) 
+      },
+      
+      _bleConnect: function(){
+        let self = this;   
+        thingy.device.request()
+        .then(function() {
+          self.isConnected = true;
+          self.showInfoToast("Thingy connected.", 3000);
+        })
+        // Read device name in order to correctly set page title
+        .then(function(){
+          return thingy.deviceName.read();
+        })
+        // Start notifications for the active page
+        .then(function(){
+          if(activePage == 'view1'){
+            self._startEnvironmentNotifications();             
+          }
+          else if(activePage == 'view2'){     
+            self._startMotionNotifications();            
+          }
+          else if(activePage == 'view3'){           
+            self._startUserInterfaceNotifications();        
+          }
+          else if(activePage == 'view4'){
+            self.readConfigurationData();
+          }
+          else if(activePage == 'view5'){
+            self.startSpeakerNotifications();
+          }
+          else if(activePage == 'view6'){
+            self.readIFTTTData();
+          }          
+          else{
+            //console.log("Current page does not correspond to a Thingy service: " + activePage);
+          }
+        })
+        // Set new MTU only on view 5
+        .then(function(){
+          if(activePage == 'view5'){
+            self.writeMtuRequest();
+          }
+        })        
+        .catch(function(error) { 
+          console.log(error);
+          self.showWarningToast(error.toString() + " - Web Bluetooth is supported in the latest versions of Chrome and Opera browsers.");
+        });
+      },
+      
+      _connectOrDisconnect: function(){
+        if (!this.isConnected){
+          this._bleConnect();
+        }
+        else{
+          this._bleDisconnect();
+        }
+      },
+      
+      _bleDisconnect: function(){
+        if (!thingy.device) {
+          return;
+        }
+        //console.log('Disconnecting from Thingy...');
+        if (thingy.device.__data__.device.gatt.connected) {
+          thingy.device.disconnect();
+          this.isConnected = false;
+        } else {
+          this.isConnected = false;
+          //console.log('> Thingy is already disconnected');
+        }        
+      },
+      
+      _isConnectedChanged: function(newValue, oldValue){
+        //console.log('> isConnected: ' + newValue);
+        if(newValue){
+          this.$.btnConnect.textContent = 'DISCONNECT';
+        }
+        else{
+          this.$.btnConnect.textContent = 'CONNECT';
+        }
+      },
+      
+      _devicenameChanged: function(newValue, oldValue){
+        let decoder = new TextDecoder('utf-8');
+        let name = decoder.decode(newValue);
+        this.pageTitle = name;
+        //console.log('deviceName: ' + name);
+      },
+      
+      _advertisingParameterChanged: function(newValue, oldValue){
+        let timeout = newValue.getUint8(2);
+        let interval = newValue.getUint16(0, true);
+        // interval in ms with 0.625ms steps
+        let intervalMs = interval * 0.625;       
+        // round to nearest integer to avoid conflict with paper-input element with type="number" attribute which does not accept decimals.
+        this.$.inputAdvertisementInterval.value = Math.round(intervalMs);
+        this.$.inputAdvertisementTimeout.value = timeout;
+      },
+      
+      _connectionParameterChanged: function(newValue, Oldvalue){
+        let timeout = newValue.getUint16(6, true);
+        let latency = newValue.getUint16(4, true);
+        let max = newValue.getUint16(2, true);
+        let min = newValue.getUint16(0, true);
+        // min and max connection interval in ms with 1.25ms steps
+        // round to nearest integer to avoid conflict with paper-input element with type="number" attribute which does not accept decimals.
+        this.$.inputMinConnectionInterval.value = Math.round(min * 1.25);
+        this.$.inputMaxConnectionInterval.value = Math.round(max * 1.25);
+        this.$.inputSlaveLatency.value = latency;
+        // timeout in ms with 10.0ms steps
+        this.$.inputSupervisionTimeout.value = timeout * 10;
+      },
+      
+      _eddystoneUrlChanged: function(newValue, Oldvalue){
+        let scheme = newValue.getUint8(0);
+        let decoder = new TextDecoder('utf-8');
+        let url = decoder.decode(newValue);
+        // remove first character from string which is equal to scheme
+        let urlSliced = url.slice(1);
+        //console.log('Read schemes as: ' + scheme);
+        //console.log('Read URL as: ' + urlSliced);
+        this.$.inputPrefixList.selected = scheme;
+        this.$.inputUrl.value = urlSliced;
+      }, 
+      
+      _cloudTokenChanged: function(newValue, Oldvalue){
+        let decoder = new TextDecoder('utf-8');
+        let token = decoder.decode(newValue);
+        this.$.inputCloudToken.value = token;
+        //console.log('cloudToken: ' + token);
+        if(activePage == 'view6'){
+          views.view6.set('cloudToken', token);
+        }
+        this.iftttKey = token;
+        //console.log("cloudToken is: " + token + " and iftttKey is: " + this.iftttKey);
+      }, 
+      
+      _firmwareVersionChanged: function(newValue, Oldvalue){
+        let major = newValue.getUint8(0);
+        let minor = newValue.getUint8(1);
+        let patch = newValue.getUint8(2);
+        let version = major + '.' + minor + '.' + patch;
+        //console.log('firmware version: ' + version);
+        views.view4.set('firmwareVersion', version);
+        // check for updated firmware
+        if(major == 1 && minor < 1){
+          this.showInfoToast("New firmware available. Check nordicesmi.com/thingy", 5000);
+        }
+      },  
+      
+      _mtuRequestChanged: function(newValue, oldValue){
+        let exchangeRequest  = newValue.getUint8(0);
+        let mtu = newValue.getUint16(1);
+        this.$.inputMtu.value = mtu;
+        //console.log("MTU exchange request: " + exchangeRequest + "  MTU: " + mtu);
+      },
+      
+      _temperatureChanged: function(newValue, oldValue){
+        let integer = newValue.getUint8(0);
+        let decimal = newValue.getUint8(1);
+        let temp = integer + '.' + decimal;
+        //console.log('temperature: ' + temp);
+        this.iftttTemperature = temp;
+        if(activePage == 'view1'){
+          views.view1.set('temperature', temp);
+        }
+      },
+      
+      _pressureChanged: function(newValue, oldValue){
+        let integer = newValue.getUint32(0, true);
+        let decimal = newValue.getUint8(4);
+        //console.log('pressure: ' + integer);
+        this.iftttPressure = integer;
+        if(activePage == 'view1'){
+          views.view1.set('pressure', integer);
+        }
+      },     
+      
+      _humidityChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        //console.log('humidity: ' + data);
+        this.iftttHumidity = data;
+        if(activePage == 'view1'){
+          views.view1.set('humidity', data);
+        }
+      },     
+      
+      _gasChanged: function(newValue, oldValue){
+        let eco2 = newValue.getUint16(0, true);
+        let tvoc = newValue.getUint16(2, true);
+        views.view1.set('tvoc', tvoc);
+        views.view1.set('eco2', eco2);
+        //console.log('tvoc: ' + tvoc);
+        //console.log('eco2: ' + eco2);
+      },     
+      
+      _colorChanged: function(newValue, oldValue){
+        let r = newValue.getUint16(0, true);
+        let g = newValue.getUint16(2, true);
+        let b = newValue.getUint16(4, true);
+        let c = newValue.getUint16(6, true);
+        let rRatio = r / (r+g+b);
+        let gRatio = g / (r+g+b);
+        let bRatio = b / (r+g+b);
+        let clear_at_black = 300;
+        let clear_at_white = 400;
+        let clear_diff = clear_at_white - clear_at_black;
+        let clear_normalized = (c - clear_at_black) / clear_diff;
+        if (clear_normalized < 0)
+        {
+            clear_normalized = 0;
+        }        
+        let red = rRatio * 255.0 * 3 * clear_normalized;
+        if(red > 255){red = 255;}
+        let green = gRatio * 255.0 * 3 * clear_normalized;
+        if(green > 255){green = 255;}
+        let blue = bRatio * 255.0 * 3 * clear_normalized;
+        if(blue > 255){blue = 255;}       
+        let color = "rgb("+red.toFixed(0)+","+green.toFixed(0)+","+blue.toFixed(0)+")";
+        //console.log('Color: ' + color);
+        views.view1.set('color', color);
+      },     
+      
+      _environmentConfigurationChanged: function(newValue, oldValue){
+        let temperatureInterval = newValue.getUint16(0, true);
+        let pressureInterval = newValue.getUint16(2, true);
+        let humidityInterval = newValue.getUint16(4, true);
+        let colorInterval = newValue.getUint16(6, true);
+        let gasInterval = newValue.getUint8(8, true);
+        let redCalibration = newValue.getUint8(9, true);
+        let greenCalibration = newValue.getUint8(10, true);
+        let blueCalibration = newValue.getUint8(11, true);
+        //console.log('environmentConfiguration read');
+        this.$.inputTemperatureInterval.value = temperatureInterval;
+        this.$.inputPressureInterval.value = pressureInterval;
+        this.$.inputHumidityInterval.value = humidityInterval;
+        this.$.inputColorInterval.value = colorInterval;
+        this.$.inputGasInterval.value = gasInterval;
+        this.$.inputColorCalibrationRed.value = redCalibration;
+        this.$.inputColorCalibrationGreen.value = greenCalibration;
+        this.$.inputColorCalibrationBlue.value = blueCalibration;
+      },   
+
+      _motionConfigurationChanged: function(newValue, oldValue){
+        let pedometerInterval = newValue.getUint16(0, true);
+        let temperatureCompensationInterval = newValue.getUint16(2, true);
+        let compassCompensationInterval = newValue.getUint16(4, true);
+        let motionProcessingFrequency = newValue.getUint16(6, true);
+        let wakeOnMotion = newValue.getUint8(8, true);
+        //console.log('motionConfiguration read');
+        this.$.inputPedometerInterval.value = pedometerInterval;
+        this.$.inputTemperatureCompensationInterval.value = temperatureCompensationInterval;
+        this.$.inputCompassCompensationInterval.value = compassCompensationInterval;
+        this.$.inputMotionInterval.value = motionProcessingFrequency;
+        this.$.inputWakeOnMotion.value = wakeOnMotion;
+      },
+      
+      _tapChanged: function(newValue, oldValue){
+        let direction = newValue.getUint8(0);
+        let count = newValue.getUint8(1);
+        let dir;
+        switch(direction){
+          case 1:
+            dir = 'X UP';
+            break;
+          case 2:
+            dir = 'X DOWN';
+            break;
+          case 3:
+            dir = 'Y UP';
+            break;
+          case 4:
+            dir = 'Y DOWN';
+            break;
+          case 5:
+            dir = 'Z UP';
+            break;
+          case 6:
+            dir = 'Z DOWN';
+            break; 
+          default:
+            //console.log("Error. Unknown tap direction: " + tap);
+        }
+        let taps = dir + ' for ' + count + ' tap(s)';
+        //console.log('tap direction :' + taps);
+        views.view2.set('tap', taps);
+      },      
+      
+      _orientationChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        let orientation;
+        switch(data){
+          case 0:
+            orientation = 'Portrait';
+            break;
+          case 1:
+            orientation = 'Landscape';
+            break;
+          case 2:
+            orientation = 'Portrait reversed';
+            break;
+          case 3:
+            orientation = 'Landscape reversed';
+            break;            
+        }
+        //console.log('orientation : ' + orientation);
+        views.view2.set('orientation', orientation);
+      },   
+      
+      _quaternionChanged: function(newValue, oldValue){
+        // Divide by (1<<30) according to sensor specification
+        let w = newValue.getInt32(0, true) / (1 << 30);
+        let x = newValue.getInt32(4, true) / (1 << 30);
+        let y = newValue.getInt32(8, true) / (1 << 30);
+        let z = newValue.getInt32(12, true)/ (1 << 30);
+        //console.log('quaternion : ' + [w, x, y, z].join(', '));
+
+        // calculate magnitude
+        let magnitude = Math.sqrt(Math.pow(w, 2) + Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+        // divide by magnitude
+        if(magnitude != 0){
+          w /= magnitude;
+          x /= magnitude;
+          y /= magnitude;
+          z /= magnitude;
+        }
+        //console.log('quaternion : ' + [w, x, y, z].join(', '));
+        
+        views.view2.set('quaternionW', w.toFixed(2));
+        views.view2.set('quaternionX', x.toFixed(2));
+        views.view2.set('quaternionY', y.toFixed(2));
+        views.view2.set('quaternionZ', z.toFixed(2));
+      },   
+      
+      _pedometerChanged: function(newValue, oldValue){
+        let steps = newValue.getUint32(0, true);
+        let time = newValue.getUint32(4, true);
+        //console.log('pedometer : ' + [steps, time].join(', '));
+        views.view2.set('pedometerSteps', steps);
+        views.view2.set('pedometerTime', time);
+      },   
+      
+      _rawDataChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        //console.log('rawData : ' + data);
+        //views.view2.set('rawData', data);
+      },   
+      
+      _eulerChanged: function(newValue, oldValue){
+        // Divide by two bytes (1<<16 or 2^16 or 65536) to get correct value
+        let roll = newValue.getInt32(0, true) / 65536;
+        let pitch = newValue.getInt32(4, true) / 65536;
+        let yaw = newValue.getInt32(8, true) / 65536;
+        //console.log('euler : ' + [pitch, roll, yaw].join(', '));
+        views.view2.set('eulerPitch', pitch.toFixed(2));
+        views.view2.set('eulerRoll', roll.toFixed(2));
+        views.view2.set('eulerYaw', yaw.toFixed(2));
+      },   
+      
+      _rotationMatrixChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        //console.log('rotationMatrix : ' + data);
+        //views.view2.set('rotationMatrix', data);
+      },   
+      
+      _headingChanged: function(newValue, oldValue){
+        let data = newValue.getInt32(0, true) / 65536;
+        //console.log('heading : ' + data);
+        views.view2.set('heading', data.toFixed(1));
+      }, 
+      
+      _gravityVectorChanged: function(newValue, oldValue){
+        let x = newValue.getFloat32(0, true);
+        let y = newValue.getFloat32(4, true);
+        let z = newValue.getFloat32(8, true);
+        //console.log('gravityVector : ' + [x, y, z].join(', '));
+        views.view2.set('gravityVectorX', x.toFixed(3));
+        views.view2.set('gravityVectorY', y.toFixed(3));
+        views.view2.set('gravityVectorZ', z.toFixed(3));
+      },    
+      
+      _ledChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        //console.log('led : ' + data);
+        views.view3.set('led', data);
+      },   
+      
+      _buttonChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        //console.log('Button : ' + data);
+        
+        if(activePage == 'view3'){
+          if(data == 1){
+            views.view3.set('button', 'PRESSED');
+          }
+          else{
+            views.view3.set('button', 'RELEASED');
+          }
+        }
+          
+        if(activePage == 'view6'){
+          if(data == 1){
+            //console.log("IFTTT Event: " + this.iftttEvent);
+            //console.log("IFTTT Key : " + this.iftttKeyStorage.key);
+            let temperature = this.iftttTemperature;
+            let pressure = this.iftttPressure;
+            let humidity = this.iftttHumidity;
+            this.$.ifttt.params = {value1:temperature, value2:humidity, value3:pressure};
+            //console.dir(this.$.ifttt.params);
+            this.$.ifttt.generateRequest();
+          }
+        }
+      },   
+      
+      _soundConfigurationChanged: function(newValue, oldValue){
+        let speakerMode = newValue.getUint8(0);
+        let microphoneMode = newValue.getUint8(1);
+        // subtract 1 to convert from firmware spec to list index in app
+        speakerMode --;
+        microphoneMode --;
+        //console.log('Speaker mode read as : ' + speakerMode);
+        //console.log('Microphone mode read as : ' + microphoneMode);
+        
+        this.$.inputSpeakerModeList.selected = speakerMode;
+        this.$.inputMicrophoneModeList.selected = microphoneMode;
+      },   
+      
+      _speakerChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        //console.log('gravityVector : ' + data);
+      },
+      
+      _speakerStatusChanged: function(newValue, oldValue){
+        let status = newValue.getUint8(0);
+        // status 1  = buffer almost full warning
+        if( status == 1){
+          speakerStatusReady = false;
+        }
+        else if (status == 0){
+          speakerStatusReady = true;
+          //console.log("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+        }
+        else if (status == 16 ){
+          speakerStatusReady = false;
+          //console.log("*************************************************************************************************************");
+        }
+        else{
+          speakerStatusReady = true;
+        }
+        //console.log('speakerStatus: ' + status);
+      },
+      
+      _microphoneChanged: function(newValue, oldValue){
+        let data = newValue.getUint8(0);
+        //console.log('gravityVector : ' + data);
+      },  
+      
+     _startEnvironmentNotifications: function(){
+       let self = this;
+       self._progressBar('visible');
+        //console.log('Starting environment notifications.');
+        return thingy.temperature.startNotifications()
+        .then(function(){
+          return thingy.pressure.startNotifications();
+        })
+        .then(function(){
+          return thingy.humidity.startNotifications();
+        })
+        .then(function(){
+          return thingy.gas.startNotifications();
+        })     
+        .then(function(){
+          self._progressBar('hidden');
+          return thingy.color.startNotifications();
+        })
+        .catch(function(error) { 
+          console.log(error);
+          self.showWarningToast(error.toString());
+          self._progressBar('hidden');
+        });
+      },
+      
+      _progressBar: function(status){
+        this.$.progress.style.visibility = status;
+      },
+      
+      _startMotionNotifications: function(){
+        let self = this;
+        self._progressBar('visible');
+        //console.log('Starting motion notifications.');
+            return thingy.tap.startNotifications()
+            .then(function(){
+              return thingy.orientation.startNotifications();
+            })
+            .then(function(){
+              return thingy.quaternion.startNotifications();
+            })
+            .then(function(){
+              return thingy.pedometer.startNotifications();
+            })     
+            .then(function(){
+              return thingy.rawData.startNotifications();
+            })
+            .then(function(){
+              return thingy.euler.startNotifications();
+            })
+            .then(function(){
+              return thingy.rotationMatrix.startNotifications();
+            })
+            .then(function(){
+              return thingy.heading.startNotifications();
+            })
+            .then(function(){
+              self._progressBar('hidden');
+              return thingy.gravityVector.startNotifications();
+            })            
+            .catch(function(error) { 
+              console.log(error);
+              self.showWarningToast(error.toString());
+              self._progressBar('hidden');
+          });        
+      },
+      
+      _startUserInterfaceNotifications: function(){
+        let self = this;
+        self._progressBar('visible');
+        //console.log('Starting user interface notifications.');
+        return thingy.button.startNotifications()
+        .then(function(){
+          self._progressBar('hidden');
+        })  
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+          self._progressBar('hidden');
+        })
+      },      
+      
+      readConfigurationData: function(){
+        let self = this;
+        self._progressBar('visible');
+        //console.log('Reading configuration data.');
+        return thingy.deviceName.read()
+        .then(function() {
+          return thingy.advertisingParameters.read();
+        })
+        .then(function() {
+          return thingy.connectionParameters.read();
+        })
+        .then(function() {
+          return thingy.eddystoneUrl.read();
+        })   
+        .then(function() {
+          return thingy.cloudToken.read();
+        })  
+        .then(function() {
+          return thingy.firmwareVersion.read();
+        })
+        .then(function() {
+          return thingy.mtu.read();
+        })
+        .then(function() {
+          return thingy.motionConfiguration.read();
+        })
+        .then(function() {
+          //console.log(thingy);
+          self._progressBar('hidden');
+          return thingy.environmentConfiguration.read();
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+          self._progressBar('hidden');
+        });
+      },
+      
+      readIFTTTData: function(){
+        let self = this;
+        self._progressBar('visible');
+        //console.log('Reading configuration data.');
+        if(activePage == 'view6'){
+          views.view6.set('iftttKey', this.iftttKeyStorage.key);
+        }        
+        return thingy.button.startNotifications()
+        .then(function() {
+          self._progressBar('hidden');
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+          self._progressBar('hidden');
+        });        
+      },
+      
+      updateIftttEvent: function(event){
+        let iftttEvent = event.detail.iftttEvent;
+        this.iftttEvent = iftttEvent;
+        //console.log(this.$.iftttEvent);
+      },  
+      
+      startSpeakerNotifications: function(){
+      //  DISABLED FOR NOW. NOTIFICATIONS START WHEN PSM STREAM STARTS.               
+      },
+      
+      playSound: function(event){
+        let frequency = event.detail.frequency;
+        let duration = event.detail.duration;
+        //console.log("Playing a sound from myapp with frequency " + frequency + ' for ' + duration + ' milliseconds');
+        this.writeSoundFrequency(frequency, duration);
+      },
+      
+      playSample: function(event){
+        let sample = event.detail.sample;
+        //console.log("Playing sample " + sample);
+        this.writeSoundSample(sample);
+      },
+      
+      playPCM: function(event){
+        let wav = event.detail.sample;
+        //console.log("Uploading PCM " + wav);
+        // save arraybuffer as uint16array since data is 16-bit. 
+        // discard first 44 bytes that contain wav header information.
+        let bit16Array = new Uint16Array(wav, 44);
+        let PCMArray = new Uint8Array(bit16Array.length);
+        // convert sample to use 125 as midpoint and 8-bit values
+        bit16Array.forEach( function(sample, index){
+          PCMArray[index] = (((sample * 125.0) / 32768.0) + 125.0); 
+        })
+        //console.log('PCMArray length: ' + PCMArray.length);
+        this.writeSoundPCM(PCMArray);  
+      },
+
+      stopPCM: function(){
+        this.pcmStatus = 0;
+      },
+      
+      _stopAllNotifications: function(){
+        let self = this;
+        return thingy.temperature.stopNotifications()
+        .then(function(){
+          return thingy.pressure.stopNotifications();
+        })
+        .then(function(){
+          return thingy.humidity.stopNotifications();
+        })
+        .then(function(){
+          return thingy.gas.stopNotifications();
+        })
+        .then(function(){
+          return thingy.color.stopNotifications();
+        })
+        .then(function(){
+          return thingy.tap.stopNotifications();
+        })
+        .then(function(){
+          return thingy.orientation.stopNotifications();
+        })
+        .then(function(){
+          return thingy.quaternion.stopNotifications();
+        })
+        .then(function(){
+          return thingy.pedometer.stopNotifications();
+        })
+        .then(function(){
+          return thingy.rawData.stopNotifications();
+        })
+        .then(function(){
+          return thingy.euler.stopNotifications();
+        })
+        .then(function(){
+          return thingy.rotationMatrix.stopNotifications();
+        })
+        .then(function(){
+          return thingy.heading.stopNotifications();
+        })
+        .then(function(){
+          return thingy.gravityVector.stopNotifications();
+        })
+        .then(function(){
+          return thingy.speakerStatus.stopNotifications();
+        })        
+        .then(function(){
+          //console.log('All notifications stopped.');
+        })
+        .catch(function(error){
+          console.log(error);
+          self.showWarningToast(error.toString());
+        });
+      },  
+      
+      closeWarningToast: function(){
+        this.$.warningToast.close();
+      }, 
+      
+      closeInfoToast: function(){
+        this.$.infoToast.close();
+      },       
+      
+      showWarningToast: function(text){
+        this.$.warningToast.show(text);
+      },  
+      
+      showSuccessToast: function(text){
+        this.$.successToast.show(text);
+      },  
+      
+      showInfoToast: function(text, duration){
+        this.$.infoToast.show(text, duration);
+      },   
+      
+      _handleIftttRequest: function(event){
+        //console.log("IFTTT Request: ");
+        //console.log(event);
+        this.showInfoToast("IFTTT Request sent");
+      },      
+      
+      _handleIftttResponse: function(event){
+        //console.log("IFTTT Response Status: " + event.detail.status);
+        //console.log("IFTTT Response StatusText: " + event.detail.statusText);
+        this.showSuccessToast("IFTTT Success");
+      },
+      
+      _handleIftttError: function(event){
+        //console.log(event);
+        //this.showWarningToast("IFTTT request failed");
+      }, 
+
+      initializeDefaultIftttKey: function(){
+        this.iftttKeyStorage = {
+          key: "no key set"
+        }
+      },         
+      
+      ready: function(){
+
+        // save views in global object for easy reference
+        views.view1 = Polymer.dom(this.root).querySelector('my-view1');
+        views.view2 = Polymer.dom(this.root).querySelector('my-view2');
+        views.view3 = Polymer.dom(this.root).querySelector('my-view3');
+        views.view4 = Polymer.dom(this.root).querySelector('my-view4');
+        views.view5 = Polymer.dom(this.root).querySelector('my-view5');
+        views.view6 = Polymer.dom(this.root).querySelector('my-view6');
+
+        // save characteristics in global object for easy reference
+        thingy.device = this.$.device;
+        thingy.deviceName = this.$.devicename;
+        thingy.advertisingParameters = this.$.advertisingParameters;
+        thingy.connectionParameters = this.$.connectionParameters;
+        thingy.eddystoneUrl = this.$.eddystoneUrl;
+        thingy.cloudToken = this.$.cloudToken;
+        thingy.firmwareVersion = this.$.firmwareVersion;
+        thingy.mtu = this.$.mtuRequest;
+        thingy.temperature = this.$.temperature;    
+        thingy.pressure = this.$.pressure; 
+        thingy.humidity = this.$.humidity; 
+        thingy.gas = this.$.gas; 
+        thingy.color = this.$.color; 
+        thingy.environmentConfiguration = this.$.environmentConfiguration; 
+        thingy.tap = this.$.tap; 
+        thingy.orientation = this.$.orientation; 
+        thingy.quaternion = this.$.quaternion; 
+        thingy.pedometer = this.$.pedometer; 
+        thingy.rawData = this.$.rawData; 
+        thingy.euler = this.$.euler; 
+        thingy.rotationMatrix = this.$.rotationMatrix; 
+        thingy.gravityVector = this.$.gravityVector; 
+        thingy.heading = this.$.heading; 
+        thingy.motionConfiguration = this.$.motionConfiguration;
+        thingy.led = this.$.led; 
+        thingy.button = this.$.button; 
+        thingy.soundConfiguration = this.$.soundConfiguration; 
+        thingy.speaker = this.$.speaker; 
+        thingy.speakerStatus = this.$.speakerStatus;
+        thingy.microphone = this.$.microphone; 
+      }     
+      
+
+    });
+
+  </script>
+
+</dom-module>

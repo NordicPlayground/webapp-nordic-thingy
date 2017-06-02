@@ -1,0 +1,80 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="my-view1">
+
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      .flex-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      .flex-item {
+        padding: 5px;
+        font-size: 16px;
+        flex: 1 1 25%;
+      }
+      .color-circle {
+        font-size:60px;
+        line-height: 30px; 
+      }
+      
+    </style>
+      
+    <paper-card>
+      <div class="card-content">
+      <h3>Environment</h3>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon icon="image:wb-sunny"></iron-icon> <br> {{temperature}}°C</div>
+            <div class="flex-item" align="center"> <iron-icon icon="image:filter-hdr"></iron-icon> <br> {{pressure}}hPa</div>
+            <div class="flex-item" align="center"> <iron-icon icon="icons:cloud"></iron-icon> <br> {{humidity}}%</div>
+        </div>
+        <br>
+        <div class="flex-container">
+            <div class="flex-item" align="center"> <iron-icon icon="image:filter-vintage"></iron-icon> <br> {{eco2}}ppm</div>
+            <div class="flex-item" align="center"> <iron-icon icon="maps:directions-car"></iron-icon> <br> {{tvoc}}ppb</div>
+            <div class="flex-item" align="center"> <iron-icon icon="image:color-lens"></iron-icon> <br><span class="color-circle" style="color:{{color}};">●</span> </div>
+        </div>          
+      </div>
+    </paper-card>
+    
+    <paper-card>
+      <div class="card-content">
+        <h3>Temperature</h3>
+        <my-chart></my-chart>
+      </div>
+    </paper-card>
+    
+    <paper-card>
+      <div class="card-content">
+        <h3>Pressure</h3>
+        <my-chart></my-chart>
+      </div>
+    </paper-card>    
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'my-view1',
+    });
+
+  </script>
+
+</dom-module>

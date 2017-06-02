@@ -1,0 +1,81 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view6">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+            
+      paper-card {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+      } 
+      
+      paper-dropdown-menu {
+        width: 100%;
+      }
+      
+      .card-actions {
+        margin-top: 20px;
+      }
+
+
+      
+    </style>
+    
+    <paper-card>
+      <div class="card-content">
+        <h3>IFTTT</h3>
+        <p>Key: {{iftttKey}}</p>
+        <paper-input label="Event" id="inputDeviceName" on-input="updateEvent" char-counter maxlength="20"></paper-input>
+        
+        <!--
+          <paper-dropdown-menu label="Thingy trigger">
+            <paper-listbox class="dropdown-content" id="inputLEDList">
+              <paper-item>Button</paper-item>
+              <paper-item>Temperature</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        -->
+        
+      <div class="card-actions">
+        <h4>Instructions</h4>
+        <ol>
+          <li>Save your IFTTT key in Configuration</li>
+          <li>Type an event to trigger</li>
+          <li>Press the Thingy button to trigger</li>
+        </ol>
+      </div> 
+
+        </div>
+      </paper-card>
+    
+
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view6',
+      
+      updateEvent: function(event){
+        let iftttEvent = event.currentTarget.value;
+        event.iftttEvent = iftttEvent;
+        this.fire('change-ifttt-event', event);
+      }
+    });
+  </script>
+</dom-module>

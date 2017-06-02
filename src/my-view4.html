@@ -1,0 +1,93 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view4">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+    </style>
+
+    <paper-card>
+      <div class="card-content">
+        <h3>Configuration</h3>
+        <p>Firmware version: {{firmwareVersion}}</p>
+          <div role="listbox">            
+            <a class="paper-item-link"  on-tap="showDialog" id="nameConfiguration" tabindex="-1">
+              <paper-icon-item>
+                <iron-icon icon="label" item-icon></iron-icon>
+                Thingy name
+              </paper-icon-item>
+            </a>          
+            <a class="paper-item-link"  on-tap="showDialog" id="advertisingConfiguration" tabindex="-1">                
+              <paper-icon-item>
+                <iron-icon icon="notification:wifi" item-icon></iron-icon>
+                Advertising parameters
+              </paper-icon-item>
+            </a>         
+            <a class="paper-item-link"  on-tap="showDialog" id="connectionConfiguration" tabindex="-1">                
+              <paper-icon-item>
+                <iron-icon icon="device:bluetooth-connected" item-icon></iron-icon>
+                Connection parameters
+              <paper-icon-item>
+            </a>         
+            <a class="paper-item-link"  on-tap="showDialog" id="eddystoneConfiguration" tabindex="-1">                
+              <paper-icon-item>
+                <iron-icon icon="star" item-icon></iron-icon>
+                Eddystone URL
+              </paper-icon-item>
+            </a>            
+            <a class="paper-item-link"  on-tap="showDialog" id="cloudTokenConfiguration" tabindex="-1">                
+                <paper-icon-item>
+                  <iron-icon icon="communication:vpn-key" item-icon></iron-icon>
+                  Cloud token
+                </paper-icon-item>  
+            </a>   
+            <a class="paper-item-link"  on-tap="showDialog" id="environmentSensorConfiguration" tabindex="-1">                
+                <paper-icon-item>
+                  <iron-icon icon="image:wb-sunny" item-icon></iron-icon>
+                  Environment sensors
+                </paper-icon-item>  
+            </a>  
+            <a class="paper-item-link"  on-tap="showDialog" id="motionSensorConfiguration" tabindex="-1">                
+                <paper-icon-item>
+                  <iron-icon icon="3d-rotation" item-icon></iron-icon>
+                  Motion sensor intervals
+                </paper-icon-item>  
+            </a>   
+            <a class="paper-item-link"  on-tap="showDialog" id="iftttConfiguration" tabindex="-1">                
+                <paper-icon-item>
+                  <iron-icon icon="icons:dashboard" item-icon></iron-icon>
+                  IFTTT Key
+                </paper-icon-item>  
+            </a>                                       
+          </div>
+      </div>    
+  </paper-card>
+    
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view4',
+      
+      showDialog: function(event){
+        let dialogName = event.currentTarget.id; 
+        this.fire('show-configuration-dialog', {id: dialogName});
+      }
+      
+    });
+  </script>
+</dom-module>
