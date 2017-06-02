@@ -5,8 +5,8 @@ This repository contains the source code and instructions for building the [Thin
 The web app is built with [Polymer 1.0](https://www.polymer-project.org/1.0/docs/about_10) and uses the [Web Bluetooth API](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web) to communicate with Thingy:52. The Web Bluetooth API is supported in the latest versions of Chrome and Opera on Android, Windows, Linux, Chrome OS and OS X. Check out the [up to date list of implementation status in different browsers](https://github.com/WebBluetoothCG/web-bluetooth/blob/gh-pages/implementation-status.md#chrome).
 
 ### Recommendations
-1. If you are unfamiliar with the Web Bluetooth API a great starting point is the [Interact with Bluetooth devices on the Web](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web) guide by François Beaufort.
-* If you are unfamiliar with Polymer a good starting point is the official [Polymer 1.0 Get Started](https://www.polymer-project.org/1.0/start/index) guide. 
+* Learn about the Web Bluetooth API by reading the [Interact with Bluetooth devices on the Web](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web) guide by François Beaufort.
+* Learn about Polymer by reading the official [Polymer 1.0 Get Started](https://www.polymer-project.org/1.0/start/index) guide. 
 
 ### Prerequisites
 #### Node.js
