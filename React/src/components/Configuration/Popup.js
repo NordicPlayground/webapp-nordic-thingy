@@ -18,7 +18,7 @@ export default class Popup extends React.Component {
               this.props.children
             }
             <div className="popup_buttons">
-              <button className="button_red" onClick={() => this.props.onClose()}>Close</button>
+              <button className="button_red" type="button" onClick={() => this.props.onClose()}>Close</button>
               <button className="button_green" type="submit">Confirm</button>
             </div>
           </form>

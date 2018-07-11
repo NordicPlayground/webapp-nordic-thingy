@@ -46,6 +46,8 @@ Browse inside the project and use polymer-cli to build.
 polymer build
 ```
 This will create a new *build* folder. Inside is a *bundled* and *unbundled* folder. To learn more about the build process and the output please check out the official [polymer-cli documentation](https://www.polymer-project.org/1.0/docs/tools/polymer-cli).
+
+**Note**: If you want to serve the build from a folder other than the root folder, open the package.json file and change the "homepage" field to match your desired path.
  
 ### Third-party licenses
 
