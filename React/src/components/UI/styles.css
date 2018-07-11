@@ -1,0 +1,125 @@
+.buttonState {
+  display: inline;
+  position: relative;
+  left: calc(50% - 56px);
+  top: 150px;
+}
+
+.dinoGame {
+  width: 100%;
+  position: relative;
+}
+
+.dinoGame > img {
+  display: hidden;
+  position: absolute;
+  left: calc(50% - 40px);
+  top: 50px;
+}
+
+.card_button_feature_view {
+  position: relative;
+}
+
+@media (max-width: 340px) {
+  .led_mode_button {
+      font-size: 14px;
+  }
+}
+
+.led_colorpicker .red {
+  background-color: #f44336;
+}
+
+.led_colorpicker .green {
+  background-color: #4caf50;
+}
+
+.led_colorpicker .yellow {
+  background-color: #ffeb3b;
+}
+
+.led_colorpicker .blue {
+  background-color: #2196f3;
+}
+
+.led_colorpicker .purple {
+  background-color: #f06292;
+}
+
+.led_colorpicker .white {
+  background-color: #eeeeee;
+}
+
+.led_colorpicker .cyan {
+  background-color: #4dd0e1;
+}
+
+.led_mode_button:not(:first-child) {
+  border-left: 1px solid #008cc7;
+}
+
+.led_mode_button {
+  height: 46px;
+  width: calc(100% / 4);
+  padding: 0;
+}
+
+.led_colorpicker > div {
+  display: flex;
+  flex-direction: row;
+  height: 66px;
+}
+
+.led_colorpicker > div:first-child {
+  margin-top: 30px;
+}
+
+
+.led_colorpicker > div button{
+  opacity: 0.8;
+  position: relative;
+}
+
+.led_colorpicker > div button:hover{
+  opacity: 0.9;
+}
+
+.led_colorpicker > div button:active{
+  opacity: 1;
+}
+
+.led_colorpicker > div button:disabled {
+  opacity: 1;
+  border: 3px solid #bbb;
+}
+
+.led_colorpicker > div div {
+  margin-right: 20px;
+  opacity: 0.8;
+}
+
+.led_colorpicker > div button:first-child {
+  margin-left: calc(((100% - 192px) / 4)/2);
+}
+
+.led_colorpicker > div button:last-child {
+  margin-right: 0px;
+}
+
+.led_modes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  height: 46px;
+}
+
+.card_led_view .button {
+  height: 48px;
+  width: 48px;
+  outline: none; 
+  padding: 0;
+  border-radius: 50%;
+  margin-right: calc((100% - 192px) / 4);
+}

@@ -1,0 +1,35 @@
+{
+  "name": "thingy_web_bluetooth_web_page",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "material-ui": "^0.20.1",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "react-emojione": "^5.0.0",
+    "react-redux": "^5.0.7",
+    "react-responsive": "^4.1.0",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "1.1.1",
+    "react-syntax-highlighter": "^7.0.4",
+    "react-three-renderer": "^3.2.4",
+    "react-toastify": "^4.1.0",
+    "recharts": "^1.0.0",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.3.0",
+    "thingy52_web_bluetooth": "1.4.1-transpiled",
+    "three": "^0.86.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.5",
+    "eslint": "^4.19.1",
+    "eslint-config-google": "^0.9.1",
+    "eslint-plugin-react": "^7.10.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

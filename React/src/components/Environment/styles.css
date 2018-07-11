@@ -1,0 +1,26 @@
+.card_color_view {
+  height: 100%;
+  display: block;
+}
+
+.card_color_view div {
+  display: inline-block;
+  width: 50%;
+  height: 110px;
+  margin: 40px 0px 0px 25%;
+}
+
+
+.card_color_view p {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.card_chart_view {
+  height: 80%
+}
+
+.card_chart_view p + * {
+  margin-top: 30px;
+}

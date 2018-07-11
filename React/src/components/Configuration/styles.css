@@ -1,0 +1,166 @@
+#configuration {
+  color: dimgray;
+  max-width: 380px;
+  min-width: 240px;
+  height: 450px !important;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column !important;
+  padding-left: 1em;
+  margin-right: 15px;
+}
+
+
+#configuration #firmwareLabel {
+  height: 1.5em;
+  margin-top: 0.7em;
+}
+
+#configuration h3 {
+  color: black;
+  font-weight: bold;
+  height: 50px;
+  line-height: 50px;
+}
+
+#configuration .component {
+  width: 100%;
+  height: 2em;
+  cursor: pointer;
+  margin-top: 0.7em;
+  display: flex;
+  align-items: center;
+}
+
+#configuration img {
+  opacity: 0.65;
+  width: 18px;
+  height: 18px;
+  margin: 0px 15px;
+  top: 4px;
+}
+
+.modal .header {
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+  font-weight: 500;
+  color: black;
+}
+.modal > .content {
+  padding: 10px 5px;
+}
+
+.modal input, select {
+  position: relative;
+  outline: none;
+  box-shadow: none;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  background: transparent;
+  border: none;
+  color: #212121;
+  -webkit-appearance: none;
+  text-align: inherit;
+  vertical-align: bottom;
+  font-family: 'Roboto', 'Noto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.modal .actions button {
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 0;
+  font-size: inherit;
+  text-transform: inherit;
+  font-weight: inherit;
+  outline: none;
+  cursor: pointer;
+  color: black;
+  padding: 10px 5px;
+  text-align: center;
+  position: relative;
+  border-radius: none;
+}
+
+.modal .actions button:hover {
+  background-color: rgba(0, 0, 0, 0.15)
+}
+
+.modal .underline {
+  border-bottom: 1px solid #737373;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box; /* Firefox, other Gecko */
+  box-sizing: border-box; /* Opera/IE 8+ */
+  max-height: 2px;
+  min-height: 2px;
+}
+
+.modal input:focus + .underline {
+  border-bottom: 2px solid #3f51b5;
+}
+
+.modal .actions {
+  padding: 10px 5px 0px 5px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.modal .info {
+  font-size: 12px;
+  padding-top: 2em;
+}
+
+.popup-content {
+  overflow: auto;
+  max-height: 610px;
+  max-width: 300px;
+  min-width: 275px;
+}
+
+.popup {
+  background-color: #fff;
+  padding: 20px;
+  position: fixed;
+  overflow: auto;
+  max-height: 610px;
+  max-width: 300px;
+  min-width: 235px;
+  z-index: 1300;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-height: 670px) {
+  .popup {
+    max-height: 90%;
+  }
+}
+
+.popup_buttons {
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  width: 200px;
+  margin: 20px auto 0px auto;
+}
+
+.popup_buttons button {
+  width: 50%;
+  line-height: 40px;
+}
+
+.popup_container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background-color: rgba(0,0,0,0.4);
+  display: inline-block;
+  z-index: 1200;
+}

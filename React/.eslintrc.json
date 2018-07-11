@@ -1,0 +1,45 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "parser": "babel-eslint",
+    "extends": [
+        "eslint:recommended",
+        "google",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],    
+        "prefer-const": ["error", {
+            "destructuring": "any",
+            "ignoreReadBeforeAssign": false
+        }],
+        "quote-props": ["error", "as-needed"],
+        "keyword-spacing": ["error", { 
+            "before": true,
+            "after": true
+            }],
+        "curly": 2,
+        "eqeqeq": "error",
+        "require-jsdoc": 0,
+        "no-console": 0,
+        "max-len": 0,
+        "linebreak-style": 0
+    }
+}
