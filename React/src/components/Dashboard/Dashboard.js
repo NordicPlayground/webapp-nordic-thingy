@@ -86,7 +86,7 @@ class Dashboard extends React.Component {
     if (this.props.connected) {
       if (this.state.firmware === "" || this.state.firmware === undefined) {
         routes = <div className="loading_dashboard"><div><LoadingIcon /></div></div>;
-      } else if (this.state.firmware !== "v2.1.0") {
+      } else if (this.state.firmware !== "v2.2.0") {
         routes = <div className="loading_dashboard"><div><UpdateFirmware /></div></div>;
       } else {
         routes = (
