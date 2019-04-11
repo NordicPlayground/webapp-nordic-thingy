@@ -84,7 +84,10 @@ this software without specific prior written permission.
  * **Node.js** - Install an [active LTS version of Node.js](https://github.com/nodejs/LTS) (e.g. v8.11.3). The current version (10.6.0) should work, but is not officially supported.
  * **Git** - If you want to clone this repository, you will have to install [Git](https://git-scm.com/downloads). Alternatively, you can download the repository by clicking "Clone or download", and then "Download ZIP".
  * **Google Chrome** - As [Google Chrome](https://www.google.com/chrome/) is currently the only browser supporting Web Blueooth, you will need it to use the web app.
- * **Web Bluetooth polyfill for Windows 10** - If you are using Windows you will have to install a polyfill to enable Web Bluetooth. A guide with download and setup instructions can be found [here](https://github.com/urish/web-bluetooth-polyfill).
+ * **Web Bluetooth polyfill for Windows 10** - If you are using Windows you will have to install a polyfill to enable Web Bluetooth. A guide with download and setup instructions can be found [here](https://github.com/urish/web-bluetooth-polyfill). NOTE: As of January 2019, this polyfill is outdated, and it is recommended to use [Chrome Canary](https://www.google.com/chrome/canary/) instead, because it now has native Web Bluetooth support.
+
+### Notes
+ * **Windows** - Requires Windows 10 version 1706 (Creators Update) or later for the web bluetooth API to work properly.
 
 ### Installation instructions
 1. Clone or download this repository.
