@@ -1,5 +1,7 @@
 # Thingy:52 Polymer and React web apps
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/NordicPlayground/webapp-nordic-thingy.svg)](https://greenkeeper.io/)
+
 This repository contains source code and instructions for building Polymer and React web apps showcasing the features of [Thingy:52](http://www.nordicsemi.com/thingy/). To view the live version of the Polymer web app, [click here](https://developer.nordicsemi.com/thingy/52), and to view the live version of the React web app, [click here](https://developer.nordicsemi.com/thingy/52/react).
 
 ## Apps
