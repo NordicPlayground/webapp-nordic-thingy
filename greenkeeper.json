@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "Polymer/package.json",
+        "React/package.json"
+      ]
+    }
+  }
+}
