@@ -18,7 +18,7 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
     "thingy52_web_bluetooth": "1.4.1-transpiled",
-    "three": "^0.86.0"
+    "three": ">=0.125.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.5",
